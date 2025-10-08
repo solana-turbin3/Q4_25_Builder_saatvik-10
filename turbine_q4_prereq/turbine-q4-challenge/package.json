@@ -1,0 +1,29 @@
+{
+  "name": "airdrop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "keygen": "tsx ./keygen.ts",
+    "airdrop": "tsx ./airdrop.ts",
+    "transfer": "tsx ./transfer.ts",
+    "enroll": "tsx ./enroll.ts",
+    "test": "tsx ./test.ts",
+    "generate-client": "tsx ./scripts/generate-client.ts"
+  },
+  "dependencies": {
+    "@solana-program/system": "^0.8.0",
+    "@solana/kit": "^3.0.3",
+    "@types/node": "^24.5.2",
+    "bs58": "^6.0.0",
+    "prompt-sync": "^4.2.0",
+    "typescript": "^5.9.2",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/prompt-sync": "^4.2.3",
+    "buffer": "^6.0.3",
+    "tsx": "^4.20.5"
+  }
+}
