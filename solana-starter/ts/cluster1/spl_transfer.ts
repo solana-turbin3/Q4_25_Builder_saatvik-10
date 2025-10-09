@@ -14,7 +14,7 @@ const connection = new Connection("https://api.devnet.solana.com", commitment);
 const mint = new PublicKey("Aa7xXKHYSRhvuGK94kaCqamVoTybs44qokg17sw4nDRw");
 
 // Recipient address
-const to = new PublicKey("HwrjaPLqsq3YuR6cuK93oNtpGSsXoUtQ4oY9GwuYf2Vy");
+const to = new PublicKey("G7MTCM2S1W6ufPhYLjodUyRZLBFbPz91CXd5C63aWoqV");
 
 (async () => {
     try {
@@ -40,7 +40,7 @@ const to = new PublicKey("HwrjaPLqsq3YuR6cuK93oNtpGSsXoUtQ4oY9GwuYf2Vy");
             ata.address,
             toAta.address,
             keypair,
-            1n * token_decimals
+            50n * token_decimals
         )
         console.log(`To ATA: ${transferTx}`);
 

@@ -13,14 +13,23 @@ const myKeypairSigner = createSignerFromKeypair(umi, keypair);
 umi.use(signerIdentity(myKeypairSigner));
 umi.use(mplTokenMetadata())
 
+//https://devnet.irys.xyz/GFW4to922fvivnN1u2N7XZz3sju86X41VQiVwzXjtipa
+
 const mint = generateSigner(umi);
 
 (async () => {
-    // let tx = ???
-    // let result = await tx.sendAndConfirm(umi);
-    // const signature = base58.encode(result.signature);
-    
-    // console.log(`Succesfully Minted! Check out your TX here:\nhttps://explorer.solana.com/tx/${signature}?cluster=devnet`)
+    let tx = await createNft(umi, {
+        mint,
+        name: "coolBerg",
+        symbol: "TCTB",
+        uri: "https://devnet.irys.xyz/GFW4to922fvivnN1u2N7XZz3sju86X41VQiVwzXjtipa",
+        sellerFeeBasisPoints: percentAmount(5)
+    })
+
+    let result = await tx.sendAndConfirm(umi);
+    const signature = base58.encode(result.signature);
+
+    console.log(`Succesfully Minted! Check out your TX here:\nhttps://explorer.solana.com/tx/${signature}?cluster=devnet`)
 
     console.log("Mint Address: ", mint.publicKey);
 })();
