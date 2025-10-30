@@ -78,7 +78,7 @@ impl<'info> Stake<'info> {
             .system_program(&self.system_program.to_account_info())
             .plugin(Plugin::FreezeDelegate(FreezeDelegate { frozen: true }))
             .init_authority(PluginAuthority::Address {
-                address: self.config.key(),
+                address: self.stake_account.key(),
             })
             .invoke()?;
 
