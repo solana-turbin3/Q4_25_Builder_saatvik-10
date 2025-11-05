@@ -7,7 +7,7 @@ use anchor_lang::prelude::*;
 pub use instructions::*;
 pub use state::*;
 
-declare_id!("DZDRzKdTu4SweFFjDutMgPqu55Qt9TLbhWG1cMAikYVp");
+declare_id!("5zs1u6Qj9VBCd7CABozVtoUPNBCGFkbZAWfnyYcVAV4");
 
 #[program]
 pub mod anchor_dice_game_q4_25 {
