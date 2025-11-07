@@ -16,7 +16,8 @@ pub struct RecordClaim<'info> {
     #[account(
         mut,
         seeds = [b"faucet", operator.key().as_ref()],
-        bump
+        bump,
+        constraint = faucet_registry.operator == operator.key() @ TapShieldErr::UnauthorizedFaucet
     )]
     pub faucet_registry: Account<'info, FaucetRegistry>,
 
