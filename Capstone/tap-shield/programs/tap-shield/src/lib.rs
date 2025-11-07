@@ -4,6 +4,8 @@ pub mod errors;
 pub mod instructions;
 pub mod states;
 
+use crate::instructions::*;
+
 declare_id!("BnCc1CZRBNnc2yn1fy2sPvAaZz7QrDcZpvLqyA6MgSwB");
 
 #[program]
@@ -14,11 +16,18 @@ pub mod tap_shield {
         ctx.accounts.initialize_faucet(name)
     }
 
-    pub fn record_claim(ctx: Context<RecordClaim>, claimer_pubkey: Pubkey, amount: u64) -> Result<()> {
+    pub fn record_claim(
+        ctx: Context<RecordClaim>,
+        claimer_pubkey: Pubkey,
+        amount: u64,
+    ) -> Result<()> {
         ctx.accounts.record_claim(claimer_pubkey, amount)
     }
 
-    pub fn check_eligibility(ctx: Context<CheckEligibility>) -> Result<()> {
-        ctx.accounts.initialize_faucet(name)
+    pub fn check_eligibility(
+        ctx: Context<CheckEligibility>,
+        cooldown_seconds: i64,
+    ) -> Result<bool> {
+        ctx.accounts.check_eligibility(cooldown_seconds)
     }
 }
