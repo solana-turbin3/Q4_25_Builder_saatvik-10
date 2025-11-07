@@ -4,5 +4,5 @@ pub use faucet_registry::*;
 pub mod initialize_faucet;
 pub use initialize_faucet::*;
 
-pub mod claim_record;
-pub use claim_record::*;
+pub mod record_claim;
+pub use record_claim::*;
