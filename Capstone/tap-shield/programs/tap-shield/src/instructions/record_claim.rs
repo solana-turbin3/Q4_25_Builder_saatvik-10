@@ -25,7 +25,7 @@ pub struct RecordClaim<'info> {
         init,
         payer = operator,
         space = ClaimRecord::DISCRIMINATOR.len() + ClaimRecord::INIT_SPACE,
-        seeds = [b"claim", claimer.key().as_ref(), faucet_registry.key().as_ref(), &Clock::get()?.unix_timestamp.to_le_bytes()],
+        seeds = [b"claim", claimer.key().as_ref(), faucet_registry.key().as_ref(), &faucet_registry.total_claims.to_le_bytes()],
         bump
     )]
     pub claim_record: Account<'info, ClaimRecord>,
