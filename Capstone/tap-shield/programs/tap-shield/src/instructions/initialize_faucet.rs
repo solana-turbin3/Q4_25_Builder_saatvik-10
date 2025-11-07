@@ -31,7 +31,7 @@ impl<'info> InitializeFaucet<'info> {
         faucet_registry.total_claims = 0;
         faucet_registry.created_at = clock.unix_timestamp;
 
-        println!("FAUCET: {} REGISTERED SUCCESSFULLY!", faucet_registry.name);
+        msg!("FAUCET: {} REGISTERED SUCCESSFULLY!", faucet_registry.name);
 
         Ok(())
     }
