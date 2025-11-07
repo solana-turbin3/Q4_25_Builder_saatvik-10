@@ -29,6 +29,9 @@ pub enum TapShieldErr {
     #[msg("Invalid Cooldown")]
     InvalidCooldown,
 
+    #[msg("Invalid Input")]
+    InvalidInput,
+
     #[msg("Faucet name exceed 32 characters")]
     FaucetNameTooLong,
 }
