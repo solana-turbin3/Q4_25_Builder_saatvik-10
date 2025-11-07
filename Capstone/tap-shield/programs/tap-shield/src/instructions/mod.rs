@@ -1,5 +1,5 @@
-pub mod faucet_registry;
-pub use faucet_registry::*;
+pub mod check_eligibility;
+pub use check_eligibility::*;
 
 pub mod initialize_faucet;
 pub use initialize_faucet::*;
