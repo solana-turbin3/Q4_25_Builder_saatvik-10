@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 
+use crate::errors::TapShieldErr;
+
 #[derive(Accounts)]
 pub struct CheckEligibility<'info> {
     ///CHECK: this is safe
