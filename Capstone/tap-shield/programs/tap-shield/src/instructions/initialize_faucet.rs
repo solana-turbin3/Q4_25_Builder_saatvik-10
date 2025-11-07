@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{errors::TapShieldErr, instructions::{faucet_registry, initialize_faucet}, states::FaucetRegistry};
+use crate::{errors::TapShieldErr, states::FaucetRegistry};
 
 #[derive(Accounts)]
 pub struct InitializeFaucet<'info> {
@@ -23,12 +23,15 @@ impl<'info> InitializeFaucet<'info> {
     pub fn initialize_faucet(&mut self, name: String) -> Result<()> {
         require!(name.len() <= 32, TapShieldErr::FaucetNameTooLong);
 
-        // let faucet_registry = self.faucet_registry.to_account_info();
-        // let clock = Clock::get()?;
+        let faucet_registry = &mut self.faucet_registry;
+        let clock = Clock::get()?;
 
-        // faucet_registry.operator
+        faucet_registry.operator = self.operator.key();
+        faucet_registry.name = name;
+        faucet_registry.total_claims = 0;
+        faucet_registry.created_at = clock.unix_timestamp;
 
-        // self.faucet_registry.set_inner(FaucetRegistry { operator: *self.operator.key, name, total_claims, created_at: () });
+        println!("FAUCET: {} REGISTERED SUCCESSFULLY!", faucet_registry.name);
 
         Ok(())
     }
