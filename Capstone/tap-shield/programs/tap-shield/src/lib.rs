@@ -20,14 +20,9 @@ pub mod tap_shield {
         ctx: Context<RecordClaim>,
         claimer_pubkey: Pubkey,
         amount: u64,
-    ) -> Result<()> {
-        ctx.accounts.record_claim(claimer_pubkey, amount)
-    }
-
-    pub fn check_eligibility(
-        ctx: Context<CheckEligibility>,
         cooldown_seconds: i64,
-    ) -> Result<bool> {
-        ctx.accounts.check_eligibility(cooldown_seconds)
+    ) -> Result<()> {
+        ctx.accounts
+            .record_claim(claimer_pubkey, amount, cooldown_seconds)
     }
 }
