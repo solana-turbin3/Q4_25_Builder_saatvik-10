@@ -68,11 +68,11 @@ impl<'info> RecordClaim<'info> {
             );
 
             msg!(
-                "Cooldown has been passed. {} seconds since last claim",
+                "COOLDOWN HAS BEEN PASSED. {} SECONDS SINCE LAST CLAIM",
                 time_since_last_claim
             );
         } else {
-            msg!("First time claimer ? ELIGIBLE");
+            msg!("FIRST TIME CLAIMER ? ELIGIBLE");
         }
 
         claim.claimer = claimer_pubkey;
@@ -83,7 +83,7 @@ impl<'info> RecordClaim<'info> {
         faucet_registry.total_claims += 1;
 
         msg!(
-            "Claim recorded from: {}, Claimed {} from {}",
+            "CLAIM RECORD FROM: {}, CLAIMED {} FROM {}",
             claimer_pubkey,
             amount,
             faucet_registry.name
