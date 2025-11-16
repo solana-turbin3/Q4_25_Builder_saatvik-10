@@ -2,6 +2,7 @@ import * as anchor from "@coral-xyz/anchor"
 import { Program } from "@coral-xyz/anchor"
 import { TapShield } from "../target/types/tap_shield"
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js"
+import { expect } from "chai"
 
 describe("tap-shield", () => {
   const conn = anchor.AnchorProvider.env()
@@ -12,6 +13,7 @@ describe("tap-shield", () => {
   let operator: anchor.web3.Keypair
   let claimer: anchor.web3.Keypair
   let faucetRegistryPda: PublicKey
+  let newFaucetRegistryPdA: PublicKey
   let claimRecordPda: anchor.web3.Keypair
 
   const TEST_FAUCET_NAME = "TEST FAUCET"
@@ -37,18 +39,71 @@ describe("tap-shield", () => {
 
     await airdrop(operator.publicKey, 5)
 
-    getFaucetRegistryPda(operator.publicKey)
+    faucetRegistryPda = getFaucetRegistryPda(operator.publicKey)
 
-    describe("Initialize Faucet", () => {
-      it("Initializing the Faucet Registry", async () => {
-        const txn = await program.methods.initializeFaucet(TEST_FAUCET_NAME).accounts({
+  })
+
+  describe("Initialize Faucet", () => {
+    it("Initializing the Faucet Registry", async () => {
+      const accounts = {
+        operator: operator.publicKey,
+        faucetRegistry: faucetRegistryPda,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      }
+
+      const txn = await program.methods
+        .initializeFaucet(TEST_FAUCET_NAME)
+        .accounts(accounts)
+        .signers([operator])
+        .rpc()
+
+      console.log("Initialize Faucet txn: ", txn);
+
+      const faucetAccount = await program.account.faucetRegistry.fetch(faucetRegistryPda)
+
+      expect(faucetAccount.operator.toString()).to.equal(operator.publicKey.toString())
+      expect(faucetAccount.name).to.equal(TEST_FAUCET_NAME)
+      expect(faucetAccount.totalClaims).to.equal(0)
+      expect(faucetAccount.createdAt.toNumber()).to.be.greaterThan(0)
+    })
+
+    it("Should fail if faucet already exists", async () => {
+      try {
+        const accounts = {
           operator: operator.publicKey,
           faucetRegistry: faucetRegistryPda,
-          systemProgram: anchor.web3.SystemProgram.programId
-        })
-          .signers([operator])
-          .rpc()
-      })
+          systemProgram: anchor.web3.SystemProgram.programId,
+        }
+
+        await program.methods.initializeFaucet(TEST_FAUCET_NAME).accounts(accounts).signers([operator]).rpc()
+
+        expect.fail("Should throw FaucetAlreadyExists err")
+      } catch (err) {
+        console.log(err)
+      }
+    })
+
+    it("Should fail if name > 32 chars", async () => {
+      const lName = "asd".repeat(40)
+      const newOperator = anchor.web3.Keypair.generate()
+
+      await airdrop(newOperator.publicKey, 5)
+
+      newFaucetRegistryPdA = getFaucetRegistryPda(newOperator.publicKey)
+
+      try {
+        const accounts = {
+          operator: operator.publicKey,
+          faucetRegistry: faucetRegistryPda,
+          systemProgram: anchor.web3.SystemProgram.programId,
+        }
+
+        await program.methods.initializeFaucet(TEST_FAUCET_NAME).accounts(accounts).signers([operator]).rpc()
+
+        expect.fail("Should throw FaucetNameTooLong err")
+      } catch (err) {
+        console.log(err)
+      }
     })
   })
 })
