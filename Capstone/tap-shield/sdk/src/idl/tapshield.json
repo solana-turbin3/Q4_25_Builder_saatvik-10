@@ -1,0 +1,326 @@
+{
+  "address": "DqQ2kJ4XQdNkkbytQTiNsvPsaFowcr4Gyn7hdY5ufyNA",
+  "metadata": {
+    "name": "tap_shield",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "initialize_faucet",
+      "discriminator": [
+        159,
+        109,
+        237,
+        214,
+        69,
+        231,
+        14,
+        60
+      ],
+      "accounts": [
+        {
+          "name": "operator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "faucet_registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  97,
+                  117,
+                  99,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "operator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "record_claim",
+      "discriminator": [
+        111,
+        123,
+        69,
+        192,
+        195,
+        228,
+        137,
+        30
+      ],
+      "accounts": [
+        {
+          "name": "operator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "claimer"
+        },
+        {
+          "name": "faucet_registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  97,
+                  117,
+                  99,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "operator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "claim_record",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  97,
+                  105,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "claimer"
+              },
+              {
+                "kind": "account",
+                "path": "faucet_registry"
+              },
+              {
+                "kind": "account",
+                "path": "faucet_registry.total_claims",
+                "account": "FaucetRegistry"
+              }
+            ]
+          }
+        },
+        {
+          "name": "last_claim_record",
+          "writable": true,
+          "optional": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  108,
+                  97,
+                  105,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "claimer"
+              },
+              {
+                "kind": "account",
+                "path": "faucet_registry"
+              },
+              {
+                "kind": "account",
+                "path": "faucet_registry.total_claims.saturating_sub(1)",
+                "account": "FaucetRegistry"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "claimer_pubkey",
+          "type": "pubkey"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "cooldown_seconds",
+          "type": "i64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "ClaimRecord",
+      "discriminator": [
+        57,
+        229,
+        0,
+        9,
+        65,
+        62,
+        96,
+        7
+      ]
+    },
+    {
+      "name": "FaucetRegistry",
+      "discriminator": [
+        65,
+        172,
+        111,
+        248,
+        189,
+        157,
+        113,
+        249
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "UnauthorizedSigner",
+      "msg": "Unauthorized Signer"
+    },
+    {
+      "code": 6001,
+      "name": "UnauthorizedFaucet",
+      "msg": "Unauthorized Faucet"
+    },
+    {
+      "code": 6002,
+      "name": "UnregisteredFaucet",
+      "msg": "Unregistered Faucet"
+    },
+    {
+      "code": 6003,
+      "name": "ClaimAlreadyExists",
+      "msg": "Claim already exists"
+    },
+    {
+      "code": 6004,
+      "name": "FaucetAlreadyExists",
+      "msg": "Faucet Already Exists"
+    },
+    {
+      "code": 6005,
+      "name": "ClaimTooRecent",
+      "msg": "Claim too recent"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidClaimer",
+      "msg": "Invalid Claimer"
+    },
+    {
+      "code": 6007,
+      "name": "InvaliedTimestamp",
+      "msg": "Invalied Timestamp"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidCooldown",
+      "msg": "Invalid Cooldown"
+    },
+    {
+      "code": 6009,
+      "name": "InvalidInput",
+      "msg": "Invalid Input"
+    },
+    {
+      "code": 6010,
+      "name": "FaucetNameTooLong",
+      "msg": "Faucet name exceed 32 characters"
+    }
+  ],
+  "types": [
+    {
+      "name": "ClaimRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "claimer",
+            "type": "pubkey"
+          },
+          {
+            "name": "faucet_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FaucetRegistry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "operator",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "total_claims",
+            "type": "u64"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ]
+}
