@@ -8,9 +8,9 @@
     "build": "tsc -b",
     "prepublish": "pnpm build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["solana", "faucet", "tapshield", "web3"],
+  "author": "Your Name",
+  "license": "MIT",
   "packageManager": "pnpm@10.14.0",
   "dependencies": {
     "@coral-xyz/anchor": "^0.32.1",
