@@ -1,13 +1,13 @@
 import { PublicKey } from '@solana/web3.js';
 
-export interface ClaimInfo {
+export interface ClaimRecordInfo {
   claimer: string;
   faucerId: string;
   amount: number;
   timestamp: number;
 }
 
-export interface FaucetStats {
+export interface FaucetRegistryStats {
   operator: string;
   name: string;
   totalClaims: number;
