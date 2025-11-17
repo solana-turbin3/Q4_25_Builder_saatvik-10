@@ -1,20 +1,20 @@
 import { PublicKey } from '@solana/web3.js';
 
 export interface ClaimInfo {
-  claimer: PublicKey;
-  faucerId: PublicKey;
+  claimer: string;
+  faucerId: string;
   amount: number;
   timestamp: number;
 }
 
 export interface FaucetStats {
-  operator: PublicKey;
+  operator: string;
   name: string;
   totalClaims: number;
   createdAt: number;
 }
 
 export interface TapShieldConfig {
-  programId?: PublicKey;
+  programId?: string;
   rpcUrl?: string;
 }
