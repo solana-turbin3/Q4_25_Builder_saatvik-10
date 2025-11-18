@@ -52,3 +52,48 @@ const FaucetPage = () => {
 };
 
 export default FaucetPage;
+
+/**
+ *  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-black p-4">
+      <div className="max-w-md w-full bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl">
+        <h1 className="text-4xl font-bold text-white mb-2 text-center">
+          ⚡ TapShield Faucet
+        </h1>
+        <p className="text-gray-300 text-center mb-8">
+          Claim free devnet SOL tokens
+        </p>
+
+        <div className="mb-6">
+          <WalletMultiButton className="w-full !bg-gradient-to-r !from-purple-500 !to-pink-500 hover:!from-purple-600 hover:!to-pink-600" />
+        </div>
+
+        <button
+          onClick={handleSolClaim}
+          disabled={!publicKey || loading}
+          className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-xl transition-all transform hover:scale-105 disabled:scale-100 shadow-lg"
+        >
+          {loading ? '⏳ Processing...' : '💧 Claim 0.1 SOL'}
+        </button>
+
+        {status && (
+          <div className={`mt-6 p-4 rounded-lg ${
+            status.includes('Success') 
+              ? 'bg-green-500/20 text-green-200 border border-green-500/50' 
+              : status.includes('Error') || status.includes('Failed')
+              ? 'bg-red-500/20 text-red-200 border border-red-500/50'
+              : 'bg-blue-500/20 text-blue-200 border border-blue-500/50'
+          }`}>
+            <p className="text-sm break-words">{status}</p>
+          </div>
+        )}
+
+        <div className="mt-8 pt-6 border-t border-white/10">
+          <p className="text-gray-400 text-xs text-center">
+            Powered by TapShield • Solana Devnet
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+ */
