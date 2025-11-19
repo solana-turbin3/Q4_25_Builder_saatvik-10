@@ -1,5 +1,6 @@
 import { Connection, PublicKey, Keypair, SystemProgram } from '@solana/web3.js';
 import { Program, AnchorProvider, Wallet, BN } from '@coral-xyz/anchor';
+import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 import TapShieldIDL from './idl/tapshield.json';
 import { ClaimRecordInfo, FaucetRegistryStats } from './types';
 
@@ -12,7 +13,7 @@ export class TapShield {
     this.faucetKeypair = faucetKeypair;
 
     const connection = new Connection(rpcUrl, 'confirmed');
-    const wallet = new Wallet(faucetKeypair);
+    const wallet = new NodeWallet(faucetKeypair);
 
     this.provider = new AnchorProvider(connection, wallet, {
       commitment: 'confirmed',
