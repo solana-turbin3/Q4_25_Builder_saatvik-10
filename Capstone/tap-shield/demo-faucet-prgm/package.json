@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "register-faucet": "ts-node scripts/register.faucet.ts",
     "lint": "eslint"
   },
   "dependencies": {
@@ -16,18 +17,20 @@
     "@solana/web3.js": "^1.98.4",
     "@tapshield/sdk": "link:../sdk",
     "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
     "next": "16.0.3",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^24.10.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.3",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }
