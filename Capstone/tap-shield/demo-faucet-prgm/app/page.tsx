@@ -1,5 +1,7 @@
-import FaucetPage from './components/FaucetPage';
+import FaucetPage from '../components/FaucetPage';
 
 export default function Home() {
-  <FaucetPage />;
+  return (
+    <FaucetPage />
+  )
 }
