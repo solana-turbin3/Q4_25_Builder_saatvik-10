@@ -2,10 +2,12 @@ use anchor_lang::prelude::*;
 
 use crate::{
     errors::TapShieldErr,
-    states::{ClaimRecord, FaucetRegistry},
+    states::{ClaimRecord, FaucetRegistry, UserClaimRegistry},
 };
 
 #[derive(Accounts)]
+#[instruction(claimer_pubkey: Pubkey)]
+
 pub struct RecordClaim<'info> {
     #[account(mut)]
     pub operator: Signer<'info>,
@@ -31,11 +33,20 @@ pub struct RecordClaim<'info> {
     pub claim_record: Account<'info, ClaimRecord>,
 
     #[account(
-        mut,
-        seeds = [b"claim", claimer.key().as_ref(), faucet_registry.key().as_ref(), &faucet_registry.total_claims.saturating_sub(1).to_le_bytes()],
+        init_if_needed,
+        payer = operator,
+        space = UserClaimRegistry::DISCRIMINATOR.len() + UserClaimRegistry::INIT_SPACE,
+        seeds = [b"user_registry", claimer_pubkey.as_ref()],
         bump
     )]
-    pub last_claim_record: Option<Account<'info, ClaimRecord>>,
+    pub user_claim_registry: Account<'info, UserClaimRegistry>,
+
+    // #[account(
+    //     mut,
+    //     seeds = [b"claim", claimer.key().as_ref(), faucet_registry.key().as_ref(), &faucet_registry.total_claims.saturating_sub(1).to_le_bytes()],
+    //     bump
+    // )]
+    // pub last_claim_record: Option<Account<'info, ClaimRecord>>,
 
     pub system_program: Program<'info, System>,
 }
@@ -49,6 +60,7 @@ impl<'info> RecordClaim<'info> {
     ) -> Result<()> {
         let claim = &mut self.claim_record;
         let faucet_registry = &mut self.faucet_registry;
+        let user_claim_registry = &mut self.user_claim_registry;
         let clock = Clock::get()?;
         let curr_time = clock.unix_timestamp;
 
@@ -59,8 +71,11 @@ impl<'info> RecordClaim<'info> {
             TapShieldErr::InvalidClaimer
         );
 
-        if let Some(last_claim) = &self.last_claim_record {
-            let time_since_last_claim = curr_time - last_claim.timestamp;
+        // if let Some(last_claim) = &self.last_claim_record {
+        if user_claim_registry.user != Pubkey::default() {
+            let time_since_last_claim = curr_time
+                .checked_sub(user_claim_registry.last_claim_timestamp)
+                .ok_or(TapShieldErr::InvalidTimestamp)?;
 
             require!(
                 time_since_last_claim >= cooldown_second,
@@ -78,7 +93,13 @@ impl<'info> RecordClaim<'info> {
         claim.claimer = claimer_pubkey;
         claim.faucet_id = faucet_registry.key();
         claim.amount = amount;
-        claim.timestamp = clock.unix_timestamp;
+        claim.timestamp = curr_time;
+
+        user_claim_registry.user = claimer_pubkey;
+        user_claim_registry.last_claim_timestamp = curr_time;
+        user_claim_registry.last_faucet = faucet_registry.key();
+
+        user_claim_registry.total_claims_across_faucets += 1;
 
         faucet_registry.total_claims += 1;
 
