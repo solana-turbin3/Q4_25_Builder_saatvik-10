@@ -19,9 +19,14 @@ export class TapShield {
       commitment: 'confirmed',
     });
 
-    const pId = programId || new PublicKey(TapShieldIDL.address);
+    // const pId = programId || new PublicKey(TapShieldIDL.address);
 
-    this.program = new Program(TapShieldIDL as any, this.provider, pId as any);
+    this.program = new Program(TapShieldIDL as any, this.provider);
+
+    if (programId) {
+      this.program = new Program(TapShieldIDL as any, this.provider);
+      (this.program as any).programId = programId;
+    }
   }
 
   /**
@@ -68,17 +73,33 @@ export class TapShield {
       this.program.programId
     );
 
-    const timeStamp = Math.floor(Date.now() / 1000);
+    const faucetAccount = await (this.program.account as any).faucetRegistry.fetch(faucetRegistry);
+    const claimIndex = faucetAccount.totalClaims;
 
     const [claimRecord] = PublicKey.findProgramAddressSync(
       [
         Buffer.from('claim'),
         claimerPubkey.toBuffer(),
         faucetRegistry.toBuffer(),
-        Buffer.from(new BN(timeStamp).toArray('le', 8)),
+        claimIndex.toArrayLike(Buffer, 'le', 8),
       ],
       this.program.programId
     );
+
+    let lastClaimRecord: PublicKey | null = null;
+    if (claimIndex.toNumber() > 0) {
+      const previousIndex = claimIndex.sub(new BN(1));
+      const [lastClaim] = PublicKey.findProgramAddressSync(
+        [
+          Buffer.from('claim'),
+          claimerPubkey.toBuffer(),
+          faucetRegistry.toBuffer(),
+          previousIndex.toArrayLike(Buffer, 'le', 8),
+        ],
+        this.program.programId
+      );
+      lastClaimRecord = lastClaim;
+    }
 
     try {
       await this.program.methods
@@ -88,11 +109,12 @@ export class TapShield {
           claimer: claimerPubkey,
           faucetRegistry,
           claimRecord,
+          lastClaimRecord: lastClaimRecord,
           systemProgram: SystemProgram.programId,
-        })
+        } as any)
         .rpc();
 
-      console.log(`Claim recorded from: ${claimRecord.toBase58()}`);
+      console.log(`Claim recorded: ${claimRecord.toBase58()}`);
 
       return claimRecord.toBase58();
     } catch (err: any) {
