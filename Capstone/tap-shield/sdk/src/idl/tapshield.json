@@ -136,33 +136,31 @@
           }
         },
         {
-          "name": "last_claim_record",
+          "name": "user_claim_registry",
           "writable": true,
-          "optional": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  99,
-                  108,
-                  97,
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  114,
+                  101,
+                  103,
                   105,
-                  109
+                  115,
+                  116,
+                  114,
+                  121
                 ]
               },
               {
-                "kind": "account",
-                "path": "claimer"
-              },
-              {
-                "kind": "account",
-                "path": "faucet_registry"
-              },
-              {
-                "kind": "account",
-                "path": "faucet_registry.total_claims.saturating_sub(1)",
-                "account": "FaucetRegistry"
+                "kind": "arg",
+                "path": "claimer_pubkey"
               }
             ]
           }
@@ -214,6 +212,19 @@
         113,
         249
       ]
+    },
+    {
+      "name": "UserClaimRegistry",
+      "discriminator": [
+        13,
+        231,
+        105,
+        175,
+        151,
+        111,
+        92,
+        221
+      ]
     }
   ],
   "errors": [
@@ -254,7 +265,7 @@
     },
     {
       "code": 6007,
-      "name": "InvaliedTimestamp",
+      "name": "InvalidTimestamp",
       "msg": "Invalied Timestamp"
     },
     {
@@ -318,6 +329,34 @@
           {
             "name": "created_at",
             "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserClaimRegistry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "last_claim_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "last_faucet",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_claims_across_faucets",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
