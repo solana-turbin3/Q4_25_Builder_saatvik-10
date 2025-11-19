@@ -15,6 +15,7 @@ describe("tap-shield", () => {
   let faucetRegistryPda: PublicKey
   let newFaucetRegistryPdA: PublicKey
   let claimRecordPda: PublicKey
+  let userClaimRegistryPda: PublicKey
   let nextClaimPda: PublicKey
 
   const TEST_FAUCET_NAME = "TEST FAUCET"
@@ -41,6 +42,14 @@ describe("tap-shield", () => {
     return pda
   }
 
+  function getUserClaimRegistryPda(claimerPubKey: PublicKey): PublicKey {
+    const [pda] = PublicKey.findProgramAddressSync(
+      [Buffer.from("user_registry"), claimerPubKey.toBuffer()],
+      program.programId
+    )
+    return pda
+  }
+
   before(async () => {
     operator = anchor.web3.Keypair.generate()
     claimer = anchor.web3.Keypair.generate()
@@ -48,6 +57,7 @@ describe("tap-shield", () => {
     await airdrop(operator.publicKey, 5)
 
     faucetRegistryPda = getFaucetRegistryPda(operator.publicKey)
+    userClaimRegistryPda = getUserClaimRegistryPda(claimer.publicKey)
 
   })
 
@@ -101,8 +111,8 @@ describe("tap-shield", () => {
 
       try {
         const accounts = {
-          operator: operator.publicKey,
-          faucetRegistry: faucetRegistryPda,
+          operator: newOperator.publicKey,
+          faucetRegistry: newFaucetRegistryPdA,
           systemProgram: anchor.web3.SystemProgram.programId,
         }
 
@@ -128,7 +138,7 @@ describe("tap-shield", () => {
         claimer: claimer.publicKey,
         faucetRegistry: faucetRegistryPda,
         claimRecord: claimRecordPda,
-        lastClaimRecord: null,
+        userClaimRegistry: userClaimRegistryPda,
         systemProgram: anchor.web3.SystemProgram.programId
       }
 
@@ -137,15 +147,18 @@ describe("tap-shield", () => {
       console.log("Record claim txn: ", txn)
 
       const claimAccount = await program.account.claimRecord.fetch(claimRecordPda)
-
       expect(claimAccount.claimer.toString()).to.equal(claimer.publicKey.toString())
       expect(claimAccount.faucetId.toString()).to.equal(faucetRegistryPda.toString())
       expect(claimAccount.amount.toNumber()).to.equal(CLAIM_AMOUNT.toNumber())
       expect(claimAccount.timestamp.toNumber()).to.greaterThan(0)
 
       const faucetAccount = await program.account.faucetRegistry.fetch(faucetRegistryPda)
-
       expect(faucetAccount.totalClaims.toNumber()).to.equal(1)
+
+      const userRegistry = await program.account.userClaimRegistry.fetch(userClaimRegistryPda)
+      expect(userRegistry.user.toString()).to.equal(claimer.publicKey.toString())
+      expect(userRegistry.lastFaucet.toString()).to.equal(faucetRegistryPda.toString())
+      expect(userRegistry.totalClaimsAcrossFaucets.toNumber()).to.equal(1)
     })
 
     it("Should fail when claiming to soon", async () => {
@@ -158,7 +171,7 @@ describe("tap-shield", () => {
         claimer: claimer.publicKey,
         faucetRegistry: faucetRegistryPda,
         claimRecord: nextClaimPda,
-        lastClaimRecord: claimRecordPda,
+        userClaimRegistry: userClaimRegistryPda,
         systemProgram: anchor.web3.SystemProgram.programId
       }
 
