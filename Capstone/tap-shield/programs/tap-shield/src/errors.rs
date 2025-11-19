@@ -24,7 +24,7 @@ pub enum TapShieldErr {
     InvalidClaimer,
 
     #[msg("Invalied Timestamp")]
-    InvaliedTimestamp,
+    InvalidTimestamp,
 
     #[msg("Invalid Cooldown")]
     InvalidCooldown,
