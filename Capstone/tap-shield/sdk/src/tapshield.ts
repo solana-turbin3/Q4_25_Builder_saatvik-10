@@ -86,20 +86,27 @@ export class TapShield {
       this.program.programId
     );
 
-    let lastClaimRecord: PublicKey | null = null;
-    if (claimIndex.toNumber() > 0) {
-      const previousIndex = claimIndex.sub(new BN(1));
-      const [lastClaim] = PublicKey.findProgramAddressSync(
-        [
-          Buffer.from('claim'),
-          claimerPubkey.toBuffer(),
-          faucetRegistry.toBuffer(),
-          previousIndex.toArrayLike(Buffer, 'le', 8),
-        ],
-        this.program.programId
-      );
-      lastClaimRecord = lastClaim;
-    }
+    // let lastClaimRecord: PublicKey | null = null;
+    // if (claimIndex.toNumber() > 0) {
+    //   const previousIndex = claimIndex.sub(new BN(1));
+    //   const [lastClaim] = PublicKey.findProgramAddressSync(
+    //     [
+    //       Buffer.from('claim'),
+    //       claimerPubkey.toBuffer(),
+    //       faucetRegistry.toBuffer(),
+    //       previousIndex.toArrayLike(Buffer, 'le', 8),
+    //     ],
+    //     this.program.programId
+    //   );
+    //   lastClaimRecord = lastClaim;
+    // }
+
+    const [userClaimRegistry] = PublicKey.findProgramAddressSync(
+      [Buffer.from("user_registry"),
+      claimerPubkey.toBuffer()
+      ],
+      this.program.programId
+    )
 
     try {
       await this.program.methods
@@ -109,9 +116,9 @@ export class TapShield {
           claimer: claimerPubkey,
           faucetRegistry,
           claimRecord,
-          lastClaimRecord: lastClaimRecord,
+          userClaimRegistry,
           systemProgram: SystemProgram.programId,
-        } as any)
+        })
         .rpc();
 
       console.log(`Claim recorded: ${claimRecord.toBase58()}`);
