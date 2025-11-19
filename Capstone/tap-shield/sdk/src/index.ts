@@ -1,2 +1,2 @@
-export { TapShield } from './tapshield';
+export * from './tapshield';
 export * from './types';
