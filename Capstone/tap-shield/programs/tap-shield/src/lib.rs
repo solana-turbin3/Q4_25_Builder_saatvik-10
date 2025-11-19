@@ -6,7 +6,7 @@ pub mod states;
 
 use crate::instructions::*;
 
-declare_id!("DqQ2kJ4XQdNkkbytQTiNsvPsaFowcr4Gyn7hdY5ufyNA");
+declare_id!("EY3vvz2h9otDW1icM9tZefmaE6WCkGbNbif8wTC1TR4X");
 
 #[program]
 pub mod tap_shield {

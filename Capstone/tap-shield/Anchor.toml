@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-tap_shield = "DqQ2kJ4XQdNkkbytQTiNsvPsaFowcr4Gyn7hdY5ufyNA"
+tap_shield = "EY3vvz2h9otDW1icM9tZefmaE6WCkGbNbif8wTC1TR4X"
 
 [registry]
 url = "https://api.apr.dev"
