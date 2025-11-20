@@ -62,7 +62,7 @@ When a user claims from your faucet:
 
 ```typescript
 async function handleClaim(userWallet: PublicKey) {
-  const amount = 0.1 * LAMPORTS_PER_SOL; // 0.1 SOL
+  const amount = 2 * LAMPORTS_PER_SOL; // 2 SOL
   const cooldownSeconds = 86400; // 24 hours
 
   try {
@@ -146,7 +146,7 @@ Records a claim and enforces cooldown period on-chain.
 ```typescript
 const claimAddress = await tapShield.recordClaim(
   userWallet,
-  100000000, // 0.1 SOL
+  2000000000, // 2 SOL
   86400 // 24 hour cooldown
 );
 ```
@@ -266,7 +266,7 @@ const tapShield = new TapShield(faucetKeypair, rpcUrl);
 
 // Faucet claim handler
 async function processClaim(userWallet: PublicKey) {
-  const CLAIM_AMOUNT = 0.1 * LAMPORTS_PER_SOL;
+  const CLAIM_AMOUNT = 2 * LAMPORTS_PER_SOL;
   const COOLDOWN = 86400; // 24 hours
 
   try {
