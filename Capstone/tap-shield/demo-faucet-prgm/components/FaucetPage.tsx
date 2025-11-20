@@ -4,6 +4,7 @@ import React from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useWallet } from '@solana/wallet-adapter-react';
 import axios from 'axios';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 const FaucetPage = () => {
   const { publicKey } = useWallet();
@@ -37,7 +38,7 @@ const FaucetPage = () => {
       if (data.success) {
         const explorerUrl = `https://explorer.solana.com/tx/${data.signature}?cluster=devnet`;
         setStatus(
-          `Success! Claimed ${data.amount} lamports. <a href="${explorerUrl}" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-300">View Transaction</a>`
+          `Success! Claimed ${data.amount / LAMPORTS_PER_SOL} SOL. \n<a href="${explorerUrl}" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-300">View Transaction</a>`
         );
       } else {
         setStatus(`Error: ${data.error}`);
@@ -70,7 +71,7 @@ const FaucetPage = () => {
           disabled={!publicKey || loading}
           className='w-full bg-linear-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-xl transition-all transform hover:scale-105 disabled:scale-100 shadow-lg'
         >
-          {loading ? '⏳ Processing...' : 'Claim 0.1 SOL'}
+          {loading ? '⏳ Processing...' : 'Claim 2 SOL'}
         </button>
 
         {status && (
