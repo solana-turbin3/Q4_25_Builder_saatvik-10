@@ -11,7 +11,7 @@ import {
 } from '@solana/web3.js';
 
 const COOLDOWN_SECONDS = 86400;
-const CLAIM_AMOUNT = 0.1 * LAMPORTS_PER_SOL;
+const CLAIM_AMOUNT = 2 * LAMPORTS_PER_SOL;
 
 const SECRET_KEY = process.env.FAUCET_PVT_KEY;
 const RPC_URL = process.env.RPC_URL || 'https://api.devnet.solana.com';
@@ -42,26 +42,65 @@ export async function POST(req: NextRequest) {
   try {
     const claimerPubKey = new PublicKey(wallet);
 
+    // const txn = new Transaction().add(
+    //   SystemProgram.transfer({
+    //     fromPubkey: faucetKeyPair.publicKey,
+    //     toPubkey: claimerPubKey,
+    //     lamports: CLAIM_AMOUNT,
+    //   })
+    // );
+
+    // const sign = await sendAndConfirmTransaction(connection, txn, [
+    //   faucetKeyPair,
+    // ]);
+
+    // await tapshield.recordClaim(claimerPubKey, CLAIM_AMOUNT, COOLDOWN_SECONDS);
+
+    // return NextResponse.json({
+    //   success: true,
+    //   amount: CLAIM_AMOUNT,
+    //   signature: sign,
+    //   message: 'Claimed 0.1 SOL successfully!',
+    // });
+
+    try {
+      await tapshield.recordClaim(claimerPubKey, CLAIM_AMOUNT, COOLDOWN_SECONDS)
+    } catch (cooldownErr: any) {
+      console.error('Cooldown check failed:', cooldownErr.message);
+
+      if (
+        cooldownErr.message?.includes('COOLDOWN_ACTIVE') ||
+        cooldownErr.message?.includes('ClaimTooRecent') ||
+        cooldownErr.message?.includes('6005')
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Cooldown Active! You claimed too recently. Please wait 24 hours between claims.',
+          },
+          { status: 429 }
+        );
+      }
+      throw cooldownErr;
+    }
+
     const txn = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey: faucetKeyPair.publicKey,
         toPubkey: claimerPubKey,
-        lamports: CLAIM_AMOUNT,
+        lamports: CLAIM_AMOUNT
       })
-    );
+    )
 
-    const sign = await sendAndConfirmTransaction(connection, txn, [
-      faucetKeyPair,
-    ]);
-
-    await tapshield.recordClaim(claimerPubKey, CLAIM_AMOUNT, COOLDOWN_SECONDS);
+    const sig = await sendAndConfirmTransaction(connection, txn, [faucetKeyPair])
 
     return NextResponse.json({
       success: true,
       amount: CLAIM_AMOUNT,
-      signature: sign,
-      message: 'Claimed 0.1 SOL successfully!',
+      signature: sig,
+      message: 'Claimed 2 SOL successfully!',
     });
+
   } catch (err: any) {
     console.log(err);
 
@@ -77,6 +116,16 @@ export async function POST(req: NextRequest) {
         {
           status: 429,
         }
+      );
+    }
+
+    if (err.message?.includes('UnregisteredFaucet') || err.message?.includes('6002')) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Faucet not registered. Please contact administrator.',
+        },
+        { status: 500 }
       );
     }
 
