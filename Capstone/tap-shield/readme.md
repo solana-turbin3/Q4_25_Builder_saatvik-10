@@ -190,9 +190,9 @@ interface ClaimRecordInfo {
 
 #### `getFaucetStats(): Promise<FaucetRegistryStats>`
 
-Gets statistics about your faucet.
+Gets statistics about **your own faucet** (not other faucets).
 
-**Returns:** Faucet statistics
+**Returns:** Your faucet's statistics
 
 **Example:**
 
